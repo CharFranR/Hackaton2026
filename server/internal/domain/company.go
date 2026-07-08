@@ -11,7 +11,7 @@ type Company struct {
 	Name        string
 	Category    []Category
 	Owner       User
-	Address     Adress
+	Address     Address
 	Description string
 	PhoneNumber string
 	Email       string

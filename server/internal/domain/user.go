@@ -23,7 +23,7 @@ type User struct {
 	Role      RoleOptions
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Adress    Adress
+	Address   Address
 
 	Email       string
 	PhoneNumber string

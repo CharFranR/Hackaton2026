@@ -1,13 +1,23 @@
 package domain
 
-type Adress struct {
-	Departament  string
+import "fmt"
+
+type Address struct {
+	Department   string
 	Municipality string
 	AddressLine  string
-	Latitude     float32
-	Longitude    float32
+	Latitude     float64
+	Longitude    float64
 }
 
-func (a Adress) FullAddress() bool {
-	return a.Departament != "" && a.Municipality != "" && a.AddressLine != "" && a.Latitude > 0 && a.Longitude > 0
+func (a Address) FullAddress() string {
+	return fmt.Sprintf("%s, %s, %s", a.AddressLine, a.Municipality, a.Department)
+}
+
+func (a Address) HasCoordinates() bool {
+	return a.Latitude != 0 && a.Longitude != 0
+}
+
+func (a Address) IsComplete() bool {
+	return a.Department != "" && a.Municipality != "" && a.AddressLine != ""
 }
