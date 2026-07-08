@@ -32,15 +32,28 @@ type User struct {
 }
 
 // Builder
-func NewUser() *User {
+func NewUser(email, firstName, lastName string) (*User, error) {
+	if email == "" {
+		return nil, ErrEmailRequired
+	}
+	if firstName == "" {
+		return nil, ErrFirstNameRequired
+	}
+	if lastName == "" {
+		return nil, ErrLastNameRequired
+	}
+
 	now := time.Now()
 
 	return &User{
 		ID:        uuid.New(),
+		Email:     email,
+		FirstName: firstName,
+		LastName:  lastName,
 		Role:      RolePending,
 		CreatedAt: now,
 		UpdatedAt: now,
-	}
+	}, nil
 }
 
 // Get
@@ -83,6 +96,9 @@ func (r RoleOptions) String() string {
 
 // Set
 func (u *User) SetPassword(password string) error {
+	if password == "" {
+		return ErrPasswordRequired
+	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
@@ -95,7 +111,6 @@ func (u *User) SetPassword(password string) error {
 
 	u.PasswordHash = string(hashedPassword)
 	return nil
-
 }
 
 func (u *User) Touch() {
