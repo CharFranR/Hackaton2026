@@ -24,15 +24,13 @@ type Company struct {
 
 // Builder
 
-func NewCompany(owner User, name string) (*Company, error) {
+func NewCompany(owner User, name string, now time.Time) (*Company, error) {
 	if owner.ID == uuid.Nil {
 		return nil, ErrOwnerRequired
 	}
 	if name == "" {
 		return nil, ErrNameRequired
 	}
-
-	now := time.Now()
 
 	return &Company{
 		ID:        uuid.New(),
@@ -56,8 +54,8 @@ func (c *Company) Verify() {
 	c.Verified = true
 }
 
-func (c *Company) Touch() {
-	c.UpdatedAt = time.Now()
+func (c *Company) Touch(now time.Time) {
+	c.UpdatedAt = now
 }
 
 func (c *Company) ChangeOwner(newOwner User) error {

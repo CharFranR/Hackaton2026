@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type RoleOptions int
@@ -17,22 +16,22 @@ const (
 )
 
 type User struct {
-	ID        uuid.UUID
-	FirstName string
-	LastName  string
-	Role      RoleOptions
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Address   Address
+	ID           uuid.UUID
+	FirstName    string
+	LastName     string
+	Role         RoleOptions
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Address      Address
 
-	Email       string
-	PhoneNumber string
-
+	Email        string
+	PhoneNumber  string
 	PasswordHash string
 }
 
 // Builder
-func NewUser(email, firstName, lastName string) (*User, error) {
+
+func NewUser(email, firstName, lastName string, now time.Time) (*User, error) {
 	if email == "" {
 		return nil, ErrEmailRequired
 	}
@@ -42,8 +41,6 @@ func NewUser(email, firstName, lastName string) (*User, error) {
 	if lastName == "" {
 		return nil, ErrLastNameRequired
 	}
-
-	now := time.Now()
 
 	return &User{
 		ID:        uuid.New(),
@@ -70,15 +67,6 @@ func (u User) HasRole(role RoleOptions) bool {
 	return u.Role == role
 }
 
-func (u User) CheckPassword(password string) error {
-
-	return bcrypt.CompareHashAndPassword(
-		[]byte(u.PasswordHash),
-		[]byte(password),
-	)
-
-}
-
 func (r RoleOptions) String() string {
 	switch r {
 	case RolePending:
@@ -95,24 +83,11 @@ func (r RoleOptions) String() string {
 }
 
 // Set
-func (u *User) SetPassword(password string) error {
-	if password == "" {
-		return ErrPasswordRequired
-	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword(
-		[]byte(password),
-		bcrypt.DefaultCost,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	u.PasswordHash = string(hashedPassword)
-	return nil
+func (u *User) SetPasswordHash(hash string) {
+	u.PasswordHash = hash
 }
 
-func (u *User) Touch() {
-	u.UpdatedAt = time.Now()
+func (u *User) Touch(now time.Time) {
+	u.UpdatedAt = now
 }

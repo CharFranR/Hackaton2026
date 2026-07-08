@@ -27,7 +27,7 @@ type Inquiry struct {
 
 // Builder
 
-func NewInquiry(userID, offeringID uuid.UUID, message string) (*Inquiry, error) {
+func NewInquiry(userID, offeringID uuid.UUID, message string, now time.Time) (*Inquiry, error) {
 	if message == "" {
 		return nil, ErrMessageRequired
 	}
@@ -38,7 +38,7 @@ func NewInquiry(userID, offeringID uuid.UUID, message string) (*Inquiry, error) 
 		OfferingID: offeringID,
 		Message:    message,
 		Status:     InquiryPending,
-		CreatedAt:  time.Now(),
+		CreatedAt: now,
 	}, nil
 }
 

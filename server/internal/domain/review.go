@@ -18,7 +18,7 @@ type Review struct {
 
 // Builder
 
-func NewReview(userID, companyID uuid.UUID, rating int, comment string) (*Review, error) {
+func NewReview(userID, companyID uuid.UUID, rating int, comment string, now time.Time) (*Review, error) {
 	if rating < 1 || rating > 5 {
 		return nil, ErrInvalidRating
 	}
@@ -29,6 +29,6 @@ func NewReview(userID, companyID uuid.UUID, rating int, comment string) (*Review
 		CompanyID: companyID,
 		Rating:    rating,
 		Comment:   comment,
-		CreatedAt: time.Now(),
+		CreatedAt: now,
 	}, nil
 }
