@@ -28,7 +28,7 @@ type Offering struct {
 
 // Builder
 
-func NewOffering(companyID uuid.UUID, name string, offeringType OfferingType) (*Offering, error) {
+func NewOffering(companyID uuid.UUID, name string, offeringType OfferingType, now time.Time) (*Offering, error) {
 	if name == "" {
 		return nil, ErrNameRequired
 	}
@@ -38,8 +38,6 @@ func NewOffering(companyID uuid.UUID, name string, offeringType OfferingType) (*
 	default:
 		return nil, ErrInvalidOfferingType
 	}
-
-	now := time.Now()
 
 	return &Offering{
 		ID:        uuid.New(),
@@ -63,27 +61,27 @@ func (o Offering) IsService() bool {
 
 // Set
 
-func (o *Offering) UpdatePrice(price float64) error {
+func (o *Offering) UpdatePrice(price float64, now time.Time) error {
 	if price <= 0 {
 		return ErrInvalidPrice
 	}
 	o.Price = price
-	o.Touch()
+	o.Touch(now)
 	return nil
 }
 
-func (o *Offering) UpdateDescription(description string) {
+func (o *Offering) UpdateDescription(description string, now time.Time) {
 	o.Description = description
-	o.Touch()
+	o.Touch(now)
 }
 
-func (o *Offering) UpdateImage(imageURL string) {
+func (o *Offering) UpdateImage(imageURL string, now time.Time) {
 	o.ImageURL = imageURL
-	o.Touch()
+	o.Touch(now)
 }
 
-func (o *Offering) Touch() {
-	o.UpdatedAt = time.Now()
+func (o *Offering) Touch(now time.Time) {
+	o.UpdatedAt = now
 }
 
 func (ot OfferingType) String() string {
