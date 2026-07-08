@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,13 +17,13 @@ const (
 )
 
 type User struct {
-	ID         uuid.UUID
-	FirstName  string
-	LastName   string
-	Role       RoleOptions
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	Department string
+	ID        uuid.UUID
+	FirstName string
+	LastName  string
+	Role      RoleOptions
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Adress    Adress
 
 	Email       string
 	PhoneNumber string
