@@ -1,47 +1,49 @@
 package port
 
 import (
+	"context"
+
 	domain "github.com/CharFranR/Hackaton2026/domain/entities"
 	"github.com/google/uuid"
 )
 
 type UserRepository interface {
-	FindByID(id uuid.UUID) (*domain.User, error)
-	FindByEmail(email string) (*domain.User, error)
-	ExistsByEmail(email string) (bool, error)
-	Save(user *domain.User) error
-	Update(user *domain.User) error
+	FindByID(ctx context.Context, id uuid.UUID) (*domain.User, error)
+	FindByEmail(ctx context.Context, email string) (*domain.User, error)
+	ExistsByEmail(ctx context.Context, email string) (bool, error)
+	Save(ctx context.Context, user *domain.User) error
+	Update(ctx context.Context, user *domain.User) error
 }
 
 type CompanyRepository interface {
-	FindByID(id uuid.UUID) (*domain.Company, error)
-	FindByOwner(ownerID uuid.UUID) ([]domain.Company, error)
-	Save(company *domain.Company) error
-	Update(company *domain.Company) error
+	FindByID(ctx context.Context, id uuid.UUID) (*domain.Company, error)
+	FindByOwner(ctx context.Context, ownerID uuid.UUID) ([]domain.Company, error)
+	Save(ctx context.Context, company *domain.Company) error
+	Update(ctx context.Context, company *domain.Company) error
 }
 
 type OfferingRepository interface {
-	FindByID(id uuid.UUID) (*domain.Offering, error)
-	FindByCompany(companyID uuid.UUID) ([]domain.Offering, error)
-	Save(offering *domain.Offering) error
-	Update(offering *domain.Offering) error
-	Delete(id uuid.UUID) error
+	FindByID(ctx context.Context, id uuid.UUID) (*domain.Offering, error)
+	FindByCompany(ctx context.Context, companyID uuid.UUID) ([]domain.Offering, error)
+	Save(ctx context.Context, offering *domain.Offering) error
+	Update(ctx context.Context, offering *domain.Offering) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type ReviewRepository interface {
-	FindByCompany(companyID uuid.UUID) ([]domain.Review, error)
-	FindByUser(userID uuid.UUID) ([]domain.Review, error)
-	Save(review *domain.Review) error
+	FindByCompany(ctx context.Context, companyID uuid.UUID) ([]domain.Review, error)
+	FindByUser(ctx context.Context, userID uuid.UUID) ([]domain.Review, error)
+	Save(ctx context.Context, review *domain.Review) error
 }
 
 type CategoryRepository interface {
-	FindAll() ([]domain.Category, error)
-	FindByID(id uuid.UUID) (*domain.Category, error)
+	FindAll(ctx context.Context) ([]domain.Category, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*domain.Category, error)
 }
 
 type InquiryRepository interface {
-	FindByID(id uuid.UUID) (*domain.Inquiry, error)
-	FindByUser(userID uuid.UUID) ([]domain.Inquiry, error)
-	Save(inquiry *domain.Inquiry) error
-	Update(inquiry *domain.Inquiry) error
+	FindByID(ctx context.Context, id uuid.UUID) (*domain.Inquiry, error)
+	FindByUser(ctx context.Context, userID uuid.UUID) ([]domain.Inquiry, error)
+	Save(ctx context.Context, inquiry *domain.Inquiry) error
+	Update(ctx context.Context, inquiry *domain.Inquiry) error
 }
