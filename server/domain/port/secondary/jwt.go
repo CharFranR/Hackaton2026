@@ -1,7 +1,7 @@
 package port
 
 import (
-	"github.com/CharFranR/Hackaton2026/internal/domain"
+	domain "github.com/CharFranR/Hackaton2026/domain/entities"
 	"github.com/google/uuid"
 )
 
