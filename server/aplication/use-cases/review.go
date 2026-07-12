@@ -1,0 +1,80 @@
+package usecases
+
+import (
+	"context"
+
+	"github.com/google/uuid"
+
+	"github.com/CharFranR/Hackaton2026/aplication/dto"
+	domain "github.com/CharFranR/Hackaton2026/domain/entities"
+	"github.com/CharFranR/Hackaton2026/domain/port/primary"
+	port "github.com/CharFranR/Hackaton2026/domain/port/secondary"
+)
+
+type ReviewUseCaseImpl struct {
+	reviewRepo port.ReviewRepository
+	timer      port.TimeProvider
+}
+
+func NewReviewUseCase(reviewRepo port.ReviewRepository, timer port.TimeProvider) *ReviewUseCaseImpl {
+	return &ReviewUseCaseImpl{
+		reviewRepo: reviewRepo,
+		timer:      timer,
+	}
+}
+
+func (uc *ReviewUseCaseImpl) CreateReview(ctx context.Context, req dto.CreateReviewRequest) (*dto.ReviewDTO, error) {
+	now := uc.timer.Now()
+
+	review, err := domain.NewReview(uuid.Nil, req.CompanyID, req.Rating, req.Comment, now)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := uc.reviewRepo.Save(ctx, review); err != nil {
+		return nil, err
+	}
+
+	return reviewToDTO(review), nil
+}
+
+func (uc *ReviewUseCaseImpl) GetByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {
+	reviews, err := uc.reviewRepo.FindByUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	dtos := make([]*dto.ReviewDTO, len(reviews))
+	for i := range reviews {
+		dtos[i] = reviewToDTO(&reviews[i])
+	}
+
+	return dtos, nil
+}
+
+func (uc *ReviewUseCaseImpl) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.ReviewDTO, error) {
+	reviews, err := uc.reviewRepo.FindByCompany(ctx, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	dtos := make([]*dto.ReviewDTO, len(reviews))
+	for i := range reviews {
+		dtos[i] = reviewToDTO(&reviews[i])
+	}
+
+	return dtos, nil
+}
+
+var _ primary.ReviewUseCase = (*ReviewUseCaseImpl)(nil)
+
+func reviewToDTO(review *domain.Review) *dto.ReviewDTO {
+	return &dto.ReviewDTO{
+		ID:        review.ID,
+		UserID:    review.UserID,
+		CompanyID: review.CompanyID,
+		Rating:    review.Rating,
+		Comment:   review.Comment,
+		CreatedAt: review.CreatedAt,
+	}
+}
