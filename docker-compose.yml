@@ -1,6 +1,18 @@
 services:
+
+  migrate:
+    build: ./server
+    entrypoint: ["./migrate"]
+    env_file: server/.env
+    restart: "no"                      
+    depends_on:
+      db:
+        condition: service_healthy
+
+
   api:
     env_file: "server/.env"
+    entrypoint: ["./api"]
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -19,7 +31,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hackaton -d hackaton_db"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 5

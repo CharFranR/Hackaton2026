@@ -1,3 +1,5 @@
-package api
+package main
 
-// Placeholder por el momento
+func main() {
+	// Placeholder — acá va el server HTTP
+}
