@@ -1,8 +1,13 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 type Address struct {
+	ID           uuid.UUID
 	Department   string
 	Municipality string
 	AddressLine  string
@@ -24,6 +29,7 @@ func NewAddress(department, municipality, addressLine string) (*Address, error) 
 	}
 
 	return &Address{
+		ID:           uuid.New(),
 		Department:   department,
 		Municipality: municipality,
 		AddressLine:  addressLine,
