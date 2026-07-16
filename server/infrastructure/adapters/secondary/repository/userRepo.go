@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	domain "github.com/CharFranR/Hackaton2026/domain/entities"
@@ -30,6 +32,9 @@ func (userRepo *UserRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) 
 	)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("user.FindByID: %w", domain.ErrNotFound)
+		}
 		return nil, fmt.Errorf("user.FindByID: %w", err)
 	}
 
@@ -49,6 +54,9 @@ func (userRepo *UserRepositoryImpl) FindByEmail(ctx context.Context, email strin
 	)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("user.FindByEmail: %w", domain.ErrNotFound)
+		}
 		return nil, fmt.Errorf("user.FindByEmail: %w", err)
 	}
 

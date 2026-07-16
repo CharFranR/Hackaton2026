@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	domain "github.com/CharFranR/Hackaton2026/domain/entities"
@@ -35,6 +37,9 @@ func (r *CompanyRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*do
 	)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("company.FindByID: %w", domain.ErrNotFound)
+		}
 		return nil, fmt.Errorf("company.FindByID: %w", err)
 	}
 

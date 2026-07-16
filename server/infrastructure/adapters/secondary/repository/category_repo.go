@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	domain "github.com/CharFranR/Hackaton2026/domain/entities"
@@ -47,6 +49,9 @@ func (r *CategoryRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*d
 	err := r.pool.QueryRow(ctx, query, id).Scan(&cat.ID, &cat.Name, &cat.Description)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("category.FindByID: %w", domain.ErrNotFound)
+		}
 		return nil, fmt.Errorf("category.FindByID: %w", err)
 	}
 
