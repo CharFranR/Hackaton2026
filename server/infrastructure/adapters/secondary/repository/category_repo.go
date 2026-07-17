@@ -17,6 +17,10 @@ type CategoryRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewCategoryRepository(pool *pgxpool.Pool) *CategoryRepositoryImpl {
+	return &CategoryRepositoryImpl{pool: pool}
+}
+
 func (r *CategoryRepositoryImpl) FindAll(ctx context.Context) ([]domain.Category, error) {
 	query := `SELECT id, name, description FROM categories`
 

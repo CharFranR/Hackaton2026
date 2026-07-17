@@ -17,6 +17,10 @@ type CompanyRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewCompanyRepository(pool *pgxpool.Pool) *CompanyRepositoryImpl {
+	return &CompanyRepositoryImpl{pool: pool}
+}
+
 func (r *CompanyRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*domain.Company, error) {
 	query := `
 		SELECT c.id, c.name, c.owner_id, c.description, c.phone_number, c.email, c.website, c.verified, c.created_at, c.updated_at,

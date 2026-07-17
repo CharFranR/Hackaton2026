@@ -17,6 +17,10 @@ type InquiryRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewInquiryRepository(pool *pgxpool.Pool) *InquiryRepositoryImpl {
+	return &InquiryRepositoryImpl{pool: pool}
+}
+
 func (r *InquiryRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*domain.Inquiry, error) {
 	query := `
 		SELECT id, user_id, offering_id, message, status, created_at
