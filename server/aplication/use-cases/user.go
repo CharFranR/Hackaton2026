@@ -39,6 +39,10 @@ func (uc *UserUseCaseImpl) Register(ctx context.Context, req dto.RegisterUserReq
 		return nil, domain.ErrInvalidInput
 	}
 
+	if req.Password != req.ConfirmPassword {
+		return nil, domain.ErrInvalidInput
+	}
+
 	user, err := domain.NewUser(req.Email, req.FirstName, req.LastName, now)
 	if err != nil {
 		return nil, err
