@@ -34,34 +34,40 @@ func (h *ReviewHandler) Create(w http.ResponseWriter, r *http.Request) {
 	respond(w, http.StatusCreated, result)
 }
 
-func (h *ReviewHandler) GetByCompany(w http.ResponseWriter, r *http.Request) {
-	companyID, err := uuid.Parse(r.URL.Query().Get("company_id"))
-	if err != nil {
-		respondError(w, http.StatusBadRequest, "invalid company_id")
+func (h *ReviewHandler) List(w http.ResponseWriter, r *http.Request) {
+	if companyStr := r.URL.Query().Get("company_id"); companyStr != "" {
+		companyID, err := uuid.Parse(companyStr)
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid company_id")
+			return
+		}
+
+		result, err := h.uc.GetByCompany(r.Context(), companyID)
+		if err != nil {
+			handleError(w, err)
+			return
+		}
+
+		respond(w, http.StatusOK, result)
 		return
 	}
 
-	result, err := h.uc.GetByCompany(r.Context(), companyID)
-	if err != nil {
-		handleError(w, err)
+	if userStr := r.URL.Query().Get("user_id"); userStr != "" {
+		userID, err := uuid.Parse(userStr)
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid user_id")
+			return
+		}
+
+		result, err := h.uc.GetByUser(r.Context(), userID)
+		if err != nil {
+			handleError(w, err)
+			return
+		}
+
+		respond(w, http.StatusOK, result)
 		return
 	}
 
-	respond(w, http.StatusOK, result)
-}
-
-func (h *ReviewHandler) GetByUser(w http.ResponseWriter, r *http.Request) {
-	userID, err := uuid.Parse(r.URL.Query().Get("user_id"))
-	if err != nil {
-		respondError(w, http.StatusBadRequest, "invalid user_id")
-		return
-	}
-
-	result, err := h.uc.GetByUser(r.Context(), userID)
-	if err != nil {
-		handleError(w, err)
-		return
-	}
-
-	respond(w, http.StatusOK, result)
+	respondError(w, http.StatusBadRequest, "provide company_id or user_id")
 }

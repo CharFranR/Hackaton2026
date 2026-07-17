@@ -49,7 +49,7 @@ func NewRouter(
 		})
 
 		r.Route("/reviews", func(r chi.Router) {
-			r.Get("/", review.GetByCompany)
+			r.Get("/", review.List)
 			r.With(authMW.Authenticate).Post("/", review.Create)
 		})
 
