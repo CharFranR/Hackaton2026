@@ -17,6 +17,10 @@ type OfferingRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewOfferingRepository(pool *pgxpool.Pool) *OfferingRepositoryImpl {
+	return &OfferingRepositoryImpl{pool: pool}
+}
+
 func (r *OfferingRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*domain.Offering, error) {
 	query := `
 		SELECT id, company_id, type, name, description, price, image_url, created_at, updated_at

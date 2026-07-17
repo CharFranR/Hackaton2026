@@ -15,6 +15,10 @@ type ReviewRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewReviewRepository(pool *pgxpool.Pool) *ReviewRepositoryImpl {
+	return &ReviewRepositoryImpl{pool: pool}
+}
+
 func (r *ReviewRepositoryImpl) FindByCompany(ctx context.Context, companyID uuid.UUID) ([]domain.Review, error) {
 	query := `
 		SELECT id, user_id, company_id, rating, comment, created_at

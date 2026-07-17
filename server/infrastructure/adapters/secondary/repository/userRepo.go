@@ -17,6 +17,10 @@ type UserRepositoryImpl struct {
 	pool *pgxpool.Pool
 }
 
+func NewUserRepository(pool *pgxpool.Pool) *UserRepositoryImpl {
+	return &UserRepositoryImpl{pool: pool}
+}
+
 func (userRepo *UserRepositoryImpl) FindByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
 
 	var user domain.User
