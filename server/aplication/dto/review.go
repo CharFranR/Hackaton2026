@@ -7,16 +7,16 @@ import (
 )
 
 type ReviewDTO struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	CompanyID uuid.UUID
-	Rating    int
-	Comment   string
-	CreatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	CompanyID uuid.UUID `json:"company_id"`
+	Rating    int       `json:"rating"`
+	Comment   string    `json:"comment"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type CreateReviewRequest struct {
-	CompanyID uuid.UUID
-	Rating    int
-	Comment   string
+	CompanyID uuid.UUID `json:"company_id"`
+	Rating    int       `json:"rating"`
+	Comment   string    `json:"comment"`
 }

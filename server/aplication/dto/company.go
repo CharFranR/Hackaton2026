@@ -7,37 +7,37 @@ import (
 )
 
 type CompanyDTO struct {
-	ID          uuid.UUID
-	Name        string
-	CategoryID  uuid.UUID
-	OwnerID     uuid.UUID
-	Address     string
-	Description string
-	PhoneNumber string
-	Email       string
-	Website     string
-	Verified    bool
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	CategoryID  uuid.UUID `json:"category_id"`
+	OwnerID     uuid.UUID `json:"owner_id"`
+	Address     string    `json:"address"`
+	Description string    `json:"description"`
+	PhoneNumber string    `json:"phone_number"`
+	Email       string    `json:"email"`
+	Website     string    `json:"website"`
+	Verified    bool      `json:"verified"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type RegisterCompanyRequest struct {
-	Name        string
-	CategoryID  uuid.UUID
-	Address     string
-	Description string
-	PhoneNumber string
-	Email       string
-	Website     string
+	Name        string    `json:"name"`
+	CategoryID  uuid.UUID `json:"category_id,omitempty"`
+	Address     string    `json:"address,omitempty"`
+	Description string    `json:"description,omitempty"`
+	PhoneNumber string    `json:"phone_number,omitempty"`
+	Email       string    `json:"email,omitempty"`
+	Website     string    `json:"website,omitempty"`
 }
 
 type UpdateCompanyRequest struct {
-	Name        *string
-	Category    *string
-	Address     *string
-	Description *string
-	PhoneNumber *string
-	Email       *string
-	Website     *string
+	Name        *string `json:"name,omitempty"`
+	Category    *string `json:"category,omitempty"`
+	Address     *string `json:"address,omitempty"`
+	Description *string `json:"description,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	Website     *string `json:"website,omitempty"`
 }

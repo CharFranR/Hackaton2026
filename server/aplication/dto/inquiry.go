@@ -8,21 +8,21 @@ import (
 )
 
 type InquiryDTO struct {
-	ID         uuid.UUID
-	UserID     uuid.UUID
-	OfferingID uuid.UUID
-	Message    string
-	Status     domain.InquiryStatus
+	ID         uuid.UUID            `json:"id"`
+	UserID     uuid.UUID            `json:"user_id"`
+	OfferingID uuid.UUID            `json:"offering_id"`
+	Message    string               `json:"message"`
+	Status     domain.InquiryStatus `json:"status"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type CreateInquiryRequest struct {
-	OfferingID uuid.UUID
-	Message    string
+	OfferingID uuid.UUID `json:"offering_id"`
+	Message    string    `json:"message"`
 }
 
 type UpdateInquiryRequest struct {
-	Status *domain.InquiryStatus
+	Status *domain.InquiryStatus `json:"status"`
 }

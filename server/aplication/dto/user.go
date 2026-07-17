@@ -8,44 +8,44 @@ import (
 )
 
 type UserDTO struct {
-	ID          uuid.UUID
-	Email       string
-	FirstName   string
-	LastName    string
-	Address     string
-	PhoneNumber string
-	Role        domain.RoleOptions
+	ID          uuid.UUID          `json:"id"`
+	Email       string             `json:"email"`
+	FirstName   string             `json:"first_name"`
+	LastName    string             `json:"last_name"`
+	Address     string             `json:"address"`
+	PhoneNumber string             `json:"phone_number"`
+	Role        domain.RoleOptions `json:"role"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type RegisterUserRequest struct {
-	Email           string
-	FirstName       string
-	LastName        string
-	Address         string
-	PhoneNumber     string
-	Role            domain.RoleOptions
-	Password        string
-	ConfirmPassword string
+	Email           string             `json:"email"`
+	FirstName       string             `json:"first_name"`
+	LastName        string             `json:"last_name"`
+	Address         string             `json:"address,omitempty"`
+	PhoneNumber     string             `json:"phone_number,omitempty"`
+	Role            domain.RoleOptions `json:"role,omitempty"`
+	Password        string             `json:"password"`
+	ConfirmPassword string             `json:"confirm_password"`
 }
 
 type LoginRequest struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UpdateUserRequest struct {
-	Email       *string
-	FirstName   *string
-	LastName    *string
-	Address     *string
-	PhoneNumber *string
+	Email       *string `json:"email,omitempty"`
+	FirstName   *string `json:"first_name,omitempty"`
+	LastName    *string `json:"last_name,omitempty"`
+	Address     *string `json:"address,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
 }
 
 type LoginResponse struct {
-	AccessToken string
-	ExpiresIn   int64
-	User        UserDTO
+	AccessToken string  `json:"access_token"`
+	ExpiresIn   int64   `json:"expires_in"`
+	User        UserDTO `json:"user"`
 }
