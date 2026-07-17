@@ -24,9 +24,9 @@ type RegisterUserRequest struct {
 	Email           string             `json:"email"`
 	FirstName       string             `json:"first_name"`
 	LastName        string             `json:"last_name"`
+	Role            domain.RoleOptions `json:"role"`
 	Address         string             `json:"address,omitempty"`
 	PhoneNumber     string             `json:"phone_number,omitempty"`
-	Role            domain.RoleOptions `json:"role,omitempty"`
 	Password        string             `json:"password"`
 	ConfirmPassword string             `json:"confirm_password"`
 }

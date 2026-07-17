@@ -35,10 +35,16 @@ func NewUserUseCase(
 func (uc *UserUseCaseImpl) Register(ctx context.Context, req dto.RegisterUserRequest) (*dto.UserDTO, error) {
 	now := uc.timer.Now()
 
+	if req.Role != domain.RoleMIPYME && req.Role != domain.RoleProvider {
+		return nil, domain.ErrInvalidInput
+	}
+
 	user, err := domain.NewUser(req.Email, req.FirstName, req.LastName, now)
 	if err != nil {
 		return nil, err
 	}
+
+	user.Role = req.Role
 
 	exists, err := uc.userRepo.ExistsByEmail(ctx, req.Email)
 	if err != nil {
