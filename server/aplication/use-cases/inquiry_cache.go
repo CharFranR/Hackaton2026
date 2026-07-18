@@ -29,7 +29,7 @@ func (uc *CachedInquiryUseCase) CreateInquiry(ctx context.Context, req dto.Creat
 func (uc *CachedInquiryUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.InquiryDTO, error) {
 	var inquiry *dto.InquiryDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"inquiry:"+id.String(),
 		time.Hour,
@@ -51,7 +51,7 @@ func (uc *CachedInquiryUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 func (uc *CachedInquiryUseCase) GetByUser(ctx context.Context, userID uuid.UUID) ([]*dto.InquiryDTO, error) {
 	var inquiries []*dto.InquiryDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"inquiries:byuser:"+userID.String(),
 		time.Hour,

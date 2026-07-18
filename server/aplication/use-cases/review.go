@@ -38,7 +38,7 @@ func (uc *ReviewUseCaseImpl) CreateReview(ctx context.Context, req dto.CreateRev
 	return reviewToDTO(review), nil
 }
 
-func (uc *ReviewUseCaseImpl) GetByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {
+func (uc *ReviewUseCaseImpl) FindByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {
 	reviews, err := uc.reviewRepo.FindByUser(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (uc *ReviewUseCaseImpl) GetByUser(ctx context.Context, userID uuid.UUID) ([
 	return dtos, nil
 }
 
-func (uc *ReviewUseCaseImpl) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.ReviewDTO, error) {
+func (uc *ReviewUseCaseImpl) FindByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.ReviewDTO, error) {
 	reviews, err := uc.reviewRepo.FindByCompany(ctx, companyID)
 	if err != nil {
 		return nil, err

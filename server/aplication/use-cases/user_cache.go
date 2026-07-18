@@ -33,7 +33,7 @@ func (uc *CachedUserUseCase) Login(ctx context.Context, req dto.LoginRequest) (*
 func (uc *CachedUserUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.UserDTO, error) {
 	var user *dto.UserDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"user:"+id.String(),
 		time.Hour,

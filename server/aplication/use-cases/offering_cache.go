@@ -15,7 +15,7 @@ type CachedOfferingUseCase struct {
 	cache port.Cache
 }
 
-func NewCacheCategoryUseCase(next primary.OfferingUseCase, cache port.Cache) *CachedOfferingUseCase {
+func NewCachedOfferingUseCase(next primary.OfferingUseCase, cache port.Cache) *CachedOfferingUseCase {
 	return &CachedOfferingUseCase{
 		next:  next,
 		cache: cache,
@@ -25,7 +25,7 @@ func NewCacheCategoryUseCase(next primary.OfferingUseCase, cache port.Cache) *Ca
 func (uc CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.OfferingDTO, error) {
 	var offering *dto.OfferingDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"offering:"+id.String(),
 		time.Hour,
@@ -46,7 +46,7 @@ func (uc CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 func (uc CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.OfferingDTO, error) {
 	var offering []*dto.OfferingDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"offerings:bycompany:"+companyID.String(),
 		time.Hour,
@@ -63,3 +63,13 @@ func (uc CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid
 
 	return offering, err
 }
+
+func (uc CachedOfferingUseCase) CreateOffering(ctx context.Context, req dto.CreateOfferingRequest) (*dto.OfferingDTO, error) {
+	return uc.next.CreateOffering(ctx, req)
+}
+
+func (uc CachedOfferingUseCase) UpdateOffering(ctx context.Context, id uuid.UUID, req dto.UpdateOfferingRequest) error {
+	return uc.next.UpdateOffering(ctx, id, req)
+}
+
+var _ primary.OfferingUseCase = (*CachedOfferingUseCase)(nil)

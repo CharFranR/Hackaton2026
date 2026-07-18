@@ -26,16 +26,16 @@ func (uc *CachedReviewUseCase) CreateReview(ctx context.Context, req dto.CreateR
 	return uc.next.CreateReview(ctx, req)
 }
 
-func (uc *CachedReviewUseCase) GetByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {
+func (uc *CachedReviewUseCase) FindByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {
 	var reviews []*dto.ReviewDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"reviews:byuser:"+userID.String(),
 		time.Hour,
 		&reviews,
 		func() error {
-			result, err := uc.next.GetByUser(ctx, userID)
+			result, err := uc.next.FindByUser(ctx, userID)
 			if err != nil {
 				return err
 			}
@@ -48,16 +48,16 @@ func (uc *CachedReviewUseCase) GetByUser(ctx context.Context, userID uuid.UUID) 
 	return reviews, err
 }
 
-func (uc *CachedReviewUseCase) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.ReviewDTO, error) {
+func (uc *CachedReviewUseCase) FindByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.ReviewDTO, error) {
 	var reviews []*dto.ReviewDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"reviews:bycompany:"+companyID.String(),
 		time.Hour,
 		&reviews,
 		func() error {
-			result, err := uc.next.GetByCompany(ctx, companyID)
+			result, err := uc.next.FindByCompany(ctx, companyID)
 			if err != nil {
 				return err
 			}

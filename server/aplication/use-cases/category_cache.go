@@ -25,7 +25,7 @@ func (uc *CachedCategoryUseCase) GetAll(ctx context.Context) ([]*dto.CategoryDTO
 
 	var categories []*dto.CategoryDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"categories:all",
 		time.Hour,

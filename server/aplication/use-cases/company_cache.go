@@ -26,7 +26,7 @@ func (uc *CachedCompanyUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 
 	var company *dto.CompanyDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"company:"+id.String(),
 		time.Hour,
@@ -50,7 +50,7 @@ func (uc *CachedCompanyUseCase) GetByOwner(ctx context.Context, ownerID uuid.UUI
 
 	var company []*dto.CompanyDTO
 
-	err := uc.cache.Remember(
+	_, err := uc.cache.Remember(
 		ctx,
 		"company:byowner:"+ownerID.String(),
 		time.Hour,
@@ -69,3 +69,13 @@ func (uc *CachedCompanyUseCase) GetByOwner(ctx context.Context, ownerID uuid.UUI
 
 	return company, err
 }
+
+func (uc *CachedCompanyUseCase) CreateCompany(ctx context.Context, req dto.RegisterCompanyRequest) (*dto.CompanyDTO, error) {
+	return uc.next.CreateCompany(ctx, req)
+}
+
+func (uc *CachedCompanyUseCase) UpdateCompany(ctx context.Context, id uuid.UUID, req dto.UpdateCompanyRequest) error {
+	return uc.next.UpdateCompany(ctx, id, req)
+}
+
+var _ primary.CompanyUseCase = (*CachedCompanyUseCase)(nil)
