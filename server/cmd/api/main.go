@@ -12,10 +12,12 @@ import (
 	"github.com/joho/godotenv"
 
 	usecases "github.com/CharFranR/Hackaton2026/aplication/use-cases"
+	"github.com/CharFranR/Hackaton2026/domain/port/primary"
 	"github.com/CharFranR/Hackaton2026/infrastructure/adapters/primary/api"
 	"github.com/CharFranR/Hackaton2026/infrastructure/adapters/primary/api/handler"
 	"github.com/CharFranR/Hackaton2026/infrastructure/adapters/primary/api/middleware"
 	"github.com/CharFranR/Hackaton2026/infrastructure/adapters/secondary/auth"
+	"github.com/CharFranR/Hackaton2026/infrastructure/adapters/secondary/cache"
 	repo "github.com/CharFranR/Hackaton2026/infrastructure/adapters/secondary/repository"
 	timepkg "github.com/CharFranR/Hackaton2026/infrastructure/adapters/secondary/time"
 	"github.com/CharFranR/Hackaton2026/infrastructure/database"
@@ -66,12 +68,25 @@ func main() {
 	categoryRepo := repo.NewCategoryRepository(pool)
 	inquiryRepo := repo.NewInquiryRepository(pool)
 
-	userUC := usecases.NewUserUseCase(userRepo, hasher, jwtProvider, clock)
-	companyUC := usecases.NewCompanyUseCase(companyRepo, userRepo, categoryRepo, clock)
-	offeringUC := usecases.NewOfferingUseCase(offeringRepo, clock)
-	reviewUC := usecases.NewReviewUseCase(reviewRepo, clock)
-	categoryUC := usecases.NewCategoryUseCase(categoryRepo)
-	inquiryUC := usecases.NewInquiryUseCase(inquiryRepo, clock)
+	cacheClient := cache.NewCacheImpl(
+		os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"),
+		os.Getenv("REDIS_PASSWORD"),
+		0,
+	)
+
+	var userUC primary.UserUseCase = usecases.NewUserUseCase(userRepo, hasher, jwtProvider, clock)
+	var companyUC primary.CompanyUseCase = usecases.NewCompanyUseCase(companyRepo, userRepo, categoryRepo, clock)
+	var offeringUC primary.OfferingUseCase = usecases.NewOfferingUseCase(offeringRepo, clock)
+	var reviewUC primary.ReviewUseCase = usecases.NewReviewUseCase(reviewRepo, clock)
+	var categoryUC primary.CategoryUseCase = usecases.NewCategoryUseCase(categoryRepo)
+	var inquiryUC primary.InquiryUseCase = usecases.NewInquiryUseCase(inquiryRepo, clock)
+
+	categoryUC = usecases.NewCachedCategoryUseCase(categoryUC, cacheClient)
+	companyUC = usecases.NewCachedCompanyUseCase(companyUC, cacheClient)
+	offeringUC = usecases.NewCachedOfferingUseCase(offeringUC, cacheClient)
+	reviewUC = usecases.NewCachedReviewUseCase(reviewUC, cacheClient)
+	inquiryUC = usecases.NewCachedInquiryUseCase(inquiryUC, cacheClient)
+	userUC = usecases.NewCachedUserUseCase(userUC, cacheClient)
 
 	userHandler := handler.NewUserHandler(userUC)
 	companyHandler := handler.NewCompanyHandler(companyUC)
