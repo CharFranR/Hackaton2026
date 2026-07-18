@@ -42,7 +42,7 @@ func (h *ReviewHandler) List(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result, err := h.uc.GetByCompany(r.Context(), companyID)
+		result, err := h.uc.FindByCompany(r.Context(), companyID)
 		if err != nil {
 			handleError(w, err)
 			return
@@ -59,7 +59,7 @@ func (h *ReviewHandler) List(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result, err := h.uc.GetByUser(r.Context(), userID)
+		result, err := h.uc.FindByUser(r.Context(), userID)
 		if err != nil {
 			handleError(w, err)
 			return
