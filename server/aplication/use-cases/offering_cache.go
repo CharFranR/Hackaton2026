@@ -22,7 +22,7 @@ func NewCachedOfferingUseCase(next primary.OfferingUseCase, cache port.Cache) *C
 	}
 }
 
-func (uc CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.OfferingDTO, error) {
+func (uc *CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.OfferingDTO, error) {
 	var offering *dto.OfferingDTO
 
 	_, err := uc.cache.Remember(
@@ -43,7 +43,7 @@ func (uc CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 	return offering, err
 }
 
-func (uc CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.OfferingDTO, error) {
+func (uc *CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid.UUID) ([]*dto.OfferingDTO, error) {
 	var offering []*dto.OfferingDTO
 
 	_, err := uc.cache.Remember(
@@ -64,12 +64,26 @@ func (uc CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid
 	return offering, err
 }
 
-func (uc CachedOfferingUseCase) CreateOffering(ctx context.Context, req dto.CreateOfferingRequest) (*dto.OfferingDTO, error) {
-	return uc.next.CreateOffering(ctx, req)
+func (uc *CachedOfferingUseCase) CreateOffering(ctx context.Context, req dto.CreateOfferingRequest) (*dto.OfferingDTO, error) {
+	result, err := uc.next.CreateOffering(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.cache.Delete(ctx, "offerings:bycompany:"+result.CompanyID.String())
+
+	return result, nil
 }
 
-func (uc CachedOfferingUseCase) UpdateOffering(ctx context.Context, id uuid.UUID, req dto.UpdateOfferingRequest) error {
-	return uc.next.UpdateOffering(ctx, id, req)
+func (uc *CachedOfferingUseCase) UpdateOffering(ctx context.Context, id uuid.UUID, req dto.UpdateOfferingRequest) error {
+	err := uc.next.UpdateOffering(ctx, id, req)
+	if err != nil {
+		return err
+	}
+
+	_ = uc.cache.Delete(ctx, "offering:"+id.String())
+
+	return nil
 }
 
 var _ primary.OfferingUseCase = (*CachedOfferingUseCase)(nil)

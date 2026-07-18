@@ -53,7 +53,14 @@ func (uc *CachedUserUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.Us
 }
 
 func (uc *CachedUserUseCase) UpdateProfile(ctx context.Context, id uuid.UUID, req dto.UpdateUserRequest) error {
-	return uc.next.UpdateProfile(ctx, id, req)
+	err := uc.next.UpdateProfile(ctx, id, req)
+	if err != nil {
+		return err
+	}
+
+	_ = uc.cache.Delete(ctx, "user:"+id.String())
+
+	return nil
 }
 
 var _ primary.UserUseCase = (*CachedUserUseCase)(nil)

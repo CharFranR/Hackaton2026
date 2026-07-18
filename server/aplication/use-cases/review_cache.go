@@ -23,7 +23,15 @@ func NewCachedReviewUseCase(next primary.ReviewUseCase, cache port.Cache) *Cache
 }
 
 func (uc *CachedReviewUseCase) CreateReview(ctx context.Context, req dto.CreateReviewRequest) (*dto.ReviewDTO, error) {
-	return uc.next.CreateReview(ctx, req)
+	result, err := uc.next.CreateReview(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.cache.Delete(ctx, "reviews:byuser:"+result.UserID.String())
+	_ = uc.cache.Delete(ctx, "reviews:bycompany:"+result.CompanyID.String())
+
+	return result, nil
 }
 
 func (uc *CachedReviewUseCase) FindByUser(ctx context.Context, userID uuid.UUID) ([]*dto.ReviewDTO, error) {

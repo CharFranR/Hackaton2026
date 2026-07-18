@@ -23,7 +23,14 @@ func NewCachedInquiryUseCase(next primary.InquiryUseCase, cache port.Cache) *Cac
 }
 
 func (uc *CachedInquiryUseCase) CreateInquiry(ctx context.Context, req dto.CreateInquiryRequest) (*dto.InquiryDTO, error) {
-	return uc.next.CreateInquiry(ctx, req)
+	result, err := uc.next.CreateInquiry(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.cache.Delete(ctx, "inquiries:byuser:"+result.UserID.String())
+
+	return result, nil
 }
 
 func (uc *CachedInquiryUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.InquiryDTO, error) {
@@ -71,7 +78,14 @@ func (uc *CachedInquiryUseCase) GetByUser(ctx context.Context, userID uuid.UUID)
 }
 
 func (uc *CachedInquiryUseCase) UpdateInquiry(ctx context.Context, id uuid.UUID, req dto.UpdateInquiryRequest) error {
-	return uc.next.UpdateInquiry(ctx, id, req)
+	err := uc.next.UpdateInquiry(ctx, id, req)
+	if err != nil {
+		return err
+	}
+
+	_ = uc.cache.Delete(ctx, "inquiry:"+id.String())
+
+	return nil
 }
 
 var _ primary.InquiryUseCase = (*CachedInquiryUseCase)(nil)

@@ -71,11 +71,29 @@ func (uc *CachedCompanyUseCase) GetByOwner(ctx context.Context, ownerID uuid.UUI
 }
 
 func (uc *CachedCompanyUseCase) CreateCompany(ctx context.Context, req dto.RegisterCompanyRequest) (*dto.CompanyDTO, error) {
-	return uc.next.CreateCompany(ctx, req)
+
+	result, err := uc.next.CreateCompany(ctx, req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_ = uc.cache.Delete(ctx, "company:byowner:"+result.OwnerID.String())
+
+	return result, nil
+
 }
 
 func (uc *CachedCompanyUseCase) UpdateCompany(ctx context.Context, id uuid.UUID, req dto.UpdateCompanyRequest) error {
-	return uc.next.UpdateCompany(ctx, id, req)
+	err := uc.next.UpdateCompany(ctx, id, req)
+
+	if err != nil {
+		return err
+	}
+
+	_ = uc.cache.Delete(ctx, "company:"+id.String())
+
+	return nil
 }
 
 var _ primary.CompanyUseCase = (*CachedCompanyUseCase)(nil)
