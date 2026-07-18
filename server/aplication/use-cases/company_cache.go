@@ -1,0 +1,71 @@
+package usecases
+
+import (
+	"context"
+	"time"
+
+	"github.com/CharFranR/Hackaton2026/aplication/dto"
+	"github.com/CharFranR/Hackaton2026/domain/port/primary"
+	port "github.com/CharFranR/Hackaton2026/domain/port/secondary"
+	"github.com/google/uuid"
+)
+
+type CachedCompanyUseCase struct {
+	next  primary.CompanyUseCase
+	cache port.Cache
+}
+
+func NewCachedCompanyUseCase(next primary.CompanyUseCase, cache port.Cache) *CachedCompanyUseCase {
+	return &CachedCompanyUseCase{
+		next:  next,
+		cache: cache,
+	}
+}
+
+func (uc *CachedCompanyUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.CompanyDTO, error) {
+
+	var company *dto.CompanyDTO
+
+	err := uc.cache.Remember(
+		ctx,
+		"company:byid",
+		time.Hour,
+		company,
+		func() error {
+			result, err := uc.next.GetByID(ctx, id)
+
+			if err != nil {
+				return err
+			}
+
+			company = result
+			return nil
+		},
+	)
+
+	return company, err
+}
+
+func (uc *CachedCompanyUseCase) GetByOwner(ctx context.Context, ownerID uuid.UUID) ([]*dto.CompanyDTO, error) {
+
+	var company []*dto.CompanyDTO
+
+	err := uc.cache.Remember(
+		ctx,
+		"company:byid",
+		time.Hour,
+		company,
+		func() error {
+			result, err := uc.next.GetByOwner(ctx, ownerID)
+
+			if err != nil {
+				return err
+			}
+
+			company = result
+			return nil
+		},
+	)
+
+	return company, err
+}
