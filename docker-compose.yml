@@ -21,6 +21,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -44,6 +46,18 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    env_file: "server/.env"
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     restart: unless-stopped
 
 volumes:
