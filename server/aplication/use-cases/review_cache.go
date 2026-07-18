@@ -40,7 +40,7 @@ func (uc *CachedReviewUseCase) FindByUser(ctx context.Context, userID uuid.UUID)
 	_, err := uc.cache.Remember(
 		ctx,
 		"reviews:byuser:"+userID.String(),
-		time.Hour,
+		5*time.Minute,
 		&reviews,
 		func() error {
 			result, err := uc.next.FindByUser(ctx, userID)
@@ -62,7 +62,7 @@ func (uc *CachedReviewUseCase) FindByCompany(ctx context.Context, companyID uuid
 	_, err := uc.cache.Remember(
 		ctx,
 		"reviews:bycompany:"+companyID.String(),
-		time.Hour,
+		5*time.Minute,
 		&reviews,
 		func() error {
 			result, err := uc.next.FindByCompany(ctx, companyID)

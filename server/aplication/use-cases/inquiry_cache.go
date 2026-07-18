@@ -39,7 +39,7 @@ func (uc *CachedInquiryUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 	_, err := uc.cache.Remember(
 		ctx,
 		"inquiry:"+id.String(),
-		time.Hour,
+		5*time.Minute,
 		&inquiry,
 		func() error {
 			result, err := uc.next.GetByID(ctx, id)
@@ -61,7 +61,7 @@ func (uc *CachedInquiryUseCase) GetByUser(ctx context.Context, userID uuid.UUID)
 	_, err := uc.cache.Remember(
 		ctx,
 		"inquiries:byuser:"+userID.String(),
-		time.Hour,
+		5*time.Minute,
 		&inquiries,
 		func() error {
 			result, err := uc.next.GetByUser(ctx, userID)

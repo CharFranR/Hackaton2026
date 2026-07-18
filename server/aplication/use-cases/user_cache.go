@@ -36,7 +36,7 @@ func (uc *CachedUserUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto.Us
 	_, err := uc.cache.Remember(
 		ctx,
 		"user:"+id.String(),
-		time.Hour,
+		5*time.Minute,
 		&user,
 		func() error {
 			result, err := uc.next.GetByID(ctx, id)
