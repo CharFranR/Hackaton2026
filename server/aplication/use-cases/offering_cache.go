@@ -27,7 +27,7 @@ func (uc CachedOfferingUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 
 	err := uc.cache.Remember(
 		ctx,
-		"offering:byid",
+		"offering:"+id.String(),
 		time.Hour,
 		&offering,
 		func() error {
@@ -48,7 +48,7 @@ func (uc CachedOfferingUseCase) GetByCompany(ctx context.Context, companyID uuid
 
 	err := uc.cache.Remember(
 		ctx,
-		"offering:byid",
+		"offerings:bycompany:"+companyID.String(),
 		time.Hour,
 		&offering,
 		func() error {

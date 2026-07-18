@@ -28,9 +28,9 @@ func (uc *CachedCompanyUseCase) GetByID(ctx context.Context, id uuid.UUID) (*dto
 
 	err := uc.cache.Remember(
 		ctx,
-		"company:byid",
+		"company:"+id.String(),
 		time.Hour,
-		company,
+		&company,
 		func() error {
 			result, err := uc.next.GetByID(ctx, id)
 
@@ -52,9 +52,9 @@ func (uc *CachedCompanyUseCase) GetByOwner(ctx context.Context, ownerID uuid.UUI
 
 	err := uc.cache.Remember(
 		ctx,
-		"company:byid",
+		"company:byowner:"+ownerID.String(),
 		time.Hour,
-		company,
+		&company,
 		func() error {
 			result, err := uc.next.GetByOwner(ctx, ownerID)
 
